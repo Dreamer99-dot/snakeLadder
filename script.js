@@ -80,6 +80,45 @@ function initUIState() {
   elements.startGame.disabled = false;
 }
 
+function updateBoardSize() {
+  const board = elements.board;
+  if (!board) return;
+  const viewport = window.visualViewport;
+  const viewportWidth =
+    (viewport && viewport.width) ||
+    document.documentElement.clientWidth ||
+    window.innerWidth;
+  const viewportHeight =
+    (viewport && viewport.height) ||
+    document.documentElement.clientHeight ||
+    window.innerHeight;
+  const app = document.querySelector(".app");
+  const appStyle = app ? getComputedStyle(app) : null;
+  const padX = appStyle
+    ? parseFloat(appStyle.paddingLeft) + parseFloat(appStyle.paddingRight)
+    : 40;
+  const padY = appStyle
+    ? parseFloat(appStyle.paddingTop) + parseFloat(appStyle.paddingBottom)
+    : 40;
+  const header = document.querySelector(".app-header");
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  const controls = document.querySelector(".controls");
+  const isStacked = window.matchMedia("(max-width: 900px)").matches;
+  const controlsHeight =
+    isStacked && controls ? controls.getBoundingClientRect().height : 0;
+  const controlsWidth =
+    !isStacked && controls ? controls.getBoundingClientRect().width : 0;
+  const availableWidth = Math.max(0, viewportWidth - padX - controlsWidth);
+  const availableHeight = Math.max(
+    0,
+    viewportHeight - padY - headerHeight - controlsHeight
+  );
+  const size = Math.max(200, Math.floor(Math.min(availableWidth, availableHeight)));
+  board.style.width = `${size}px`;
+  board.style.height = `${size}px`;
+  board.style.setProperty("--board-size", `${size}px`);
+}
+
 function buildBoard() {
   elements.board.innerHTML = "";
   for (let row = 9; row >= 0; row -= 1) {
@@ -175,6 +214,9 @@ function startGame() {
   renderTokens();
   updateCurrentPlayer();
   logMove("Game started. All players begin on square 1.");
+  updateBoardSize();
+  setTimeout(updateBoardSize, 50);
+  setTimeout(updateBoardSize, 250);
 }
 
 async function rollDice() {
@@ -365,6 +407,14 @@ function init() {
   updatePlayerInputs(Number(elements.playerCount.value));
   wireEvents();
   initUIState();
+  updateBoardSize();
+  window.addEventListener("resize", updateBoardSize);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", updateBoardSize);
+  }
+  window.addEventListener("load", updateBoardSize);
+  setTimeout(updateBoardSize, 50);
+  setTimeout(updateBoardSize, 250);
 }
 
 if (document.readyState === "loading") {

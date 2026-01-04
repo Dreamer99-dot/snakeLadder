@@ -110,6 +110,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .board {
@@ -120,10 +121,10 @@ body {
   background: var(--border);
   padding: 4px;
   border-radius: 12px;
-  width: min(88vmin, 92vw);
-  height: min(88vmin, 92vw);
-  max-width: 640px;
-  max-height: 640px;
+  width: var(--board-size, min(88vmin, 92vw));
+  height: var(--board-size, min(88vmin, 92vw));
+  max-width: none;
+  max-height: none;
 }
 
 .cell {
