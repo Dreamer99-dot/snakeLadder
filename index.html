@@ -20,17 +20,13 @@
         <input id="player-count" type="number" min="1" max="10" value="2" />
       </div>
       <div id="player-names" class="player-names"></div>
-      <button id="start-game" class="primary">Start Game</button>
+      <button id="start-game" class="primary" type="button">Start Game</button>
       <p id="setup-error" class="error" aria-live="polite"></p>
     </section>
 
     <section id="game-panel" class="panel game-panel hidden" hidden>
       <div class="board-wrapper">
-        <div class="board-wrap" id="board-wrap">
-          <svg id="board-overlay" class="board-overlay" aria-hidden="true"></svg>
-          <div id="board" class="board" aria-label="Snake and Ladder board"></div>
-          <div id="board-resize-handle" class="board-resize-handle" aria-hidden="true"></div>
-        </div>
+        <div id="board" class="board" aria-label="Snake and Ladder board"></div>
       </div>
       <aside class="controls">
         <div class="current-player" aria-live="polite">
@@ -42,37 +38,22 @@
           <span class="label">Dice</span>
           <div class="dice-visual" aria-live="polite">
             <img id="dice-image" class="dice-image" src="Dice/dice.jpg" alt="Dice showing -" />
-            <span id="dice-value" class="dice-number">-</span>
           </div>
-        </div>
-        <div class="zoom-controls" aria-label="Zoom controls">
-          <span class="label">Board Zoom</span>
-          <div id="zoom-label" class="zoom-label">100%</div>
-          <div class="zoom-buttons">
-            <button id="zoomOutBtn" class="secondary" type="button">-</button>
-            <button id="zoomResetBtn" class="secondary" type="button">Reset</button>
-            <button id="zoomInBtn" class="secondary" type="button">+</button>
-          </div>
-          <button id="fitBoardBtn" class="secondary" type="button">Fit to Screen</button>
         </div>
         <div class="log-panel">
           <h3>Move Log</h3>
           <div id="move-log" class="log"></div>
         </div>
-        <button id="restart" class="secondary hidden" hidden>Restart</button>
+        <button id="restart" class="secondary hidden" type="button" hidden>Restart</button>
       </aside>
     </section>
 
-    <div id="winner-banner" class="winner-banner hidden" role="dialog" aria-modal="true" hidden>
+    <div id="winner-banner" class="winner-banner hidden" role="dialog" aria-modal="true">
       <div class="winner-card">
         <h2 id="winner-text"></h2>
         <button id="winner-restart" class="primary">Restart</button>
       </div>
     </div>
-    <footer class="status-footer" aria-live="polite">
-      <span id="js-status">JS: ...</span>
-      <span id="css-status">CSS: ...</span>
-    </footer>
   </div>
 
   <script src="./script.js"></script>
