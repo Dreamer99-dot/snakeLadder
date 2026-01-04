@@ -132,6 +132,7 @@ function drawConnections() {
   overlay.style.top = `${board.offsetTop}px`;
   overlay.style.width = `${width}px`;
   overlay.style.height = `${height}px`;
+  overlay.style.display = "block";
   overlay.setAttribute("width", width);
   overlay.setAttribute("height", height);
   overlay.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -304,6 +305,7 @@ function startGame() {
   setTimeout(updateBoardSize, 50);
   setTimeout(updateBoardSize, 250);
   requestAnimationFrame(drawConnections);
+  setTimeout(drawConnections, 100);
 }
 
 async function rollDice() {
