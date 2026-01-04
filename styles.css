@@ -119,12 +119,15 @@ body {
   justify-content: center;
   align-items: center;
   max-width: 100%;
+  width: 100%;
 }
 
 .board-wrap {
   position: relative;
   width: 520px;
   height: 520px;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .board {
@@ -376,6 +379,7 @@ body {
 @media (max-width: 900px) {
   .game-panel {
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 
   .board-wrap { width: 420px; height: 420px; }

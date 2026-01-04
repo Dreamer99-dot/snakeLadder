@@ -472,8 +472,14 @@ function applyZoom(value) {
 function updateBoardSize() {
   if (!elements.boardWrap) return;
   const padding = 32;
-  const viewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  const viewportWidth =
+    (window.visualViewport && window.visualViewport.width) ||
+    document.documentElement.clientWidth ||
+    window.innerWidth;
+  const viewportHeight =
+    (window.visualViewport && window.visualViewport.height) ||
+    document.documentElement.clientHeight ||
+    window.innerHeight;
   const headerHeight = elements.appHeader ? elements.appHeader.getBoundingClientRect().height : 0;
   const isStacked = window.matchMedia("(max-width: 900px)").matches;
   const reservedUI = headerHeight + padding;
