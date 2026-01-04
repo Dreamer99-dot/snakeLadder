@@ -133,38 +133,12 @@ function drawConnections() {
   overlay.style.width = `${width}px`;
   overlay.style.height = `${height}px`;
   overlay.style.display = "block";
-  overlay.setAttribute("width", width);
-  overlay.setAttribute("height", height);
-  overlay.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  overlay.innerHTML = "";
-
-  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  const ladderMarker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-  ladderMarker.setAttribute("id", "ladder-arrow");
-  ladderMarker.setAttribute("markerWidth", "8");
-  ladderMarker.setAttribute("markerHeight", "8");
-  ladderMarker.setAttribute("refX", "4");
-  ladderMarker.setAttribute("refY", "4");
-  ladderMarker.setAttribute("orient", "auto");
-  const ladderArrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  ladderArrow.setAttribute("d", "M0,0 L8,4 L0,8 Z");
-  ladderArrow.setAttribute("fill", "#2f8f7a");
-  ladderMarker.appendChild(ladderArrow);
-  defs.appendChild(ladderMarker);
-
-  const snakeMarker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-  snakeMarker.setAttribute("id", "snake-arrow");
-  snakeMarker.setAttribute("markerWidth", "8");
-  snakeMarker.setAttribute("markerHeight", "8");
-  snakeMarker.setAttribute("refX", "4");
-  snakeMarker.setAttribute("refY", "4");
-  snakeMarker.setAttribute("orient", "auto");
-  const snakeArrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  snakeArrow.setAttribute("d", "M0,0 L8,4 L0,8 Z");
-  snakeArrow.setAttribute("fill", "#b6483d");
-  snakeMarker.appendChild(snakeArrow);
-  defs.appendChild(snakeMarker);
-  overlay.appendChild(defs);
+  overlay.width = Math.round(width);
+  overlay.height = Math.round(height);
+  const ctx = overlay.getContext("2d");
+  if (!ctx) return;
+  ctx.clearRect(0, 0, overlay.width, overlay.height);
+  ctx.lineCap = "round";
 
   const getCellCenter = (square) => {
     const cell = board.querySelector(`[data-square='${square}']`);
@@ -177,31 +151,44 @@ function drawConnections() {
     };
   };
 
-  const drawLine = (from, to, color, markerId, curve) => {
+  const drawArrow = (from, to, color, curve) => {
     const start = getCellCenter(from);
     const end = getCellCenter(to);
     if (!start || !end) return;
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    const controlX = (start.x + end.x) / 2 + curve;
-    const controlY = (start.y + end.y) / 2 - curve;
-    path.setAttribute(
-      "d",
-      `M ${start.x} ${start.y} Q ${controlX} ${controlY} ${end.x} ${end.y}`
-    );
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", color);
-    path.setAttribute("stroke-width", "4");
-    path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("marker-end", `url(#${markerId})`);
-    overlay.appendChild(path);
+    const midX = (start.x + end.x) / 2;
+    const midY = (start.y + end.y) / 2;
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const offsetX = (-dy / len) * curve;
+    const offsetY = (dx / len) * curve;
+    const controlX = midX + offsetX;
+    const controlY = midY + offsetY;
+    const lineWidth = Math.max(2, Math.min(4, width / 160));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.quadraticCurveTo(controlX, controlY, end.x, end.y);
+    ctx.stroke();
+
+    const angle = Math.atan2(end.y - controlY, end.x - controlX);
+    const headLen = lineWidth * 3;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(end.x, end.y);
+    ctx.lineTo(end.x - headLen * Math.cos(angle - Math.PI / 6), end.y - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(end.x - headLen * Math.cos(angle + Math.PI / 6), end.y - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
   };
 
   Object.entries(ladders).forEach(([from, to]) => {
-    drawLine(Number(from), Number(to), "#2f8f7a", "ladder-arrow", 0);
+    drawArrow(Number(from), Number(to), "#2f8f7a", 0);
   });
 
   Object.entries(snakes).forEach(([from, to], index) => {
-    drawLine(Number(from), Number(to), "#b6483d", "snake-arrow", -(12 + index * 2));
+    drawArrow(Number(from), Number(to), "#b6483d", -(12 + index * 2));
   });
 }
 
