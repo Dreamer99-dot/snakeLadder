@@ -56,6 +56,8 @@ function cacheElements() {
   elements = {
     setupPanel: document.getElementById("setup-panel"),
     gamePanel: document.getElementById("game-panel"),
+    appHeader: document.querySelector(".app-header"),
+    controls: document.querySelector(".controls"),
     playerCount: document.getElementById("player-count"),
     playerNames: document.getElementById("player-names"),
     startGame: document.getElementById("start-game"),
@@ -467,10 +469,16 @@ function applyZoom(value) {
 function updateBoardSize() {
   if (!elements.boardWrap) return;
   const padding = 32;
-  const reservedUI = 160;
+  const headerHeight = elements.appHeader ? elements.appHeader.getBoundingClientRect().height : 0;
+  const controlsHeight =
+    elements.controls && !elements.gamePanel?.classList.contains("hidden")
+      ? elements.controls.getBoundingClientRect().height
+      : 0;
+  const isStacked = window.matchMedia("(max-width: 900px)").matches;
+  const reservedUI = headerHeight + (isStacked ? controlsHeight : 0) + padding;
   const availableWidth = window.innerWidth - padding;
   const availableHeight = window.innerHeight - reservedUI - padding;
-  const fitSize = Math.max(240, Math.floor(Math.min(availableWidth, availableHeight)));
+  const fitSize = Math.max(200, Math.floor(Math.min(availableWidth, availableHeight)));
   const maxSize = fitSize;
   const minSize = 280;
   let baseSize = fitSize;
