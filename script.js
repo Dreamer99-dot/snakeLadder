@@ -491,7 +491,7 @@ function updateBoardSize() {
   const availableHeight = viewportHeight - reservedUI - padding;
   const fitSize = Math.max(200, Math.floor(Math.min(availableWidth, availableHeight)));
   const maxSize = fitSize;
-  const minSize = 280;
+  const minSize = Math.min(280, fitSize);
   let baseSize = fitSize;
   if (gameState.boardSizeMode === "manual" && gameState.manualBoardSizePx) {
     baseSize = gameState.manualBoardSizePx;

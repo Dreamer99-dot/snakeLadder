@@ -113,7 +113,7 @@ body {
 }
 
 .board-wrapper {
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: flex;
   justify-content: center;
