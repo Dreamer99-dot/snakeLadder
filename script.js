@@ -63,7 +63,8 @@ function cacheElements() {
     winnerText: document.getElementById("winner-text"),
     winnerRestart: document.getElementById("winner-restart"),
     restart: document.getElementById("restart"),
-    diceImage: document.getElementById("dice-image")
+    diceImage: document.getElementById("dice-image"),
+    boardOverlay: document.getElementById("board-overlay")
   };
 }
 
@@ -117,6 +118,88 @@ function updateBoardSize() {
   board.style.width = `${size}px`;
   board.style.height = `${size}px`;
   board.style.setProperty("--board-size", `${size}px`);
+  requestAnimationFrame(drawConnections);
+}
+
+function drawConnections() {
+  const overlay = elements.boardOverlay;
+  const board = elements.board;
+  if (!overlay || !board) return;
+  const width = board.clientWidth;
+  const height = board.clientHeight;
+  if (!width || !height) return;
+  overlay.style.left = `${board.offsetLeft}px`;
+  overlay.style.top = `${board.offsetTop}px`;
+  overlay.style.width = `${width}px`;
+  overlay.style.height = `${height}px`;
+  overlay.setAttribute("width", width);
+  overlay.setAttribute("height", height);
+  overlay.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  overlay.innerHTML = "";
+
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  const ladderMarker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+  ladderMarker.setAttribute("id", "ladder-arrow");
+  ladderMarker.setAttribute("markerWidth", "8");
+  ladderMarker.setAttribute("markerHeight", "8");
+  ladderMarker.setAttribute("refX", "4");
+  ladderMarker.setAttribute("refY", "4");
+  ladderMarker.setAttribute("orient", "auto");
+  const ladderArrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  ladderArrow.setAttribute("d", "M0,0 L8,4 L0,8 Z");
+  ladderArrow.setAttribute("fill", "#2f8f7a");
+  ladderMarker.appendChild(ladderArrow);
+  defs.appendChild(ladderMarker);
+
+  const snakeMarker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+  snakeMarker.setAttribute("id", "snake-arrow");
+  snakeMarker.setAttribute("markerWidth", "8");
+  snakeMarker.setAttribute("markerHeight", "8");
+  snakeMarker.setAttribute("refX", "4");
+  snakeMarker.setAttribute("refY", "4");
+  snakeMarker.setAttribute("orient", "auto");
+  const snakeArrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  snakeArrow.setAttribute("d", "M0,0 L8,4 L0,8 Z");
+  snakeArrow.setAttribute("fill", "#b6483d");
+  snakeMarker.appendChild(snakeArrow);
+  defs.appendChild(snakeMarker);
+  overlay.appendChild(defs);
+
+  const getCellCenter = (square) => {
+    const cell = board.querySelector(`[data-square='${square}']`);
+    if (!cell) return null;
+    return {
+      x: cell.offsetLeft + cell.offsetWidth / 2,
+      y: cell.offsetTop + cell.offsetHeight / 2
+    };
+  };
+
+  const drawLine = (from, to, color, markerId, curve) => {
+    const start = getCellCenter(from);
+    const end = getCellCenter(to);
+    if (!start || !end) return;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const controlX = (start.x + end.x) / 2 + curve;
+    const controlY = (start.y + end.y) / 2 - curve;
+    path.setAttribute(
+      "d",
+      `M ${start.x} ${start.y} Q ${controlX} ${controlY} ${end.x} ${end.y}`
+    );
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", color);
+    path.setAttribute("stroke-width", "4");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("marker-end", `url(#${markerId})`);
+    overlay.appendChild(path);
+  };
+
+  Object.entries(ladders).forEach(([from, to]) => {
+    drawLine(Number(from), Number(to), "#2f8f7a", "ladder-arrow", 0);
+  });
+
+  Object.entries(snakes).forEach(([from, to], index) => {
+    drawLine(Number(from), Number(to), "#b6483d", "snake-arrow", -(12 + index * 2));
+  });
 }
 
 function buildBoard() {
@@ -158,6 +241,7 @@ function buildBoard() {
       elements.board.appendChild(cell);
     });
   }
+  drawConnections();
 }
 
 function updatePlayerInputs(count) {
@@ -217,6 +301,7 @@ function startGame() {
   updateBoardSize();
   setTimeout(updateBoardSize, 50);
   setTimeout(updateBoardSize, 250);
+  requestAnimationFrame(drawConnections);
 }
 
 async function rollDice() {
