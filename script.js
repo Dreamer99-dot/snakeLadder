@@ -469,15 +469,13 @@ function applyZoom(value) {
 function updateBoardSize() {
   if (!elements.boardWrap) return;
   const padding = 32;
+  const viewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
   const headerHeight = elements.appHeader ? elements.appHeader.getBoundingClientRect().height : 0;
-  const controlsHeight =
-    elements.controls && !elements.gamePanel?.classList.contains("hidden")
-      ? elements.controls.getBoundingClientRect().height
-      : 0;
   const isStacked = window.matchMedia("(max-width: 900px)").matches;
-  const reservedUI = headerHeight + (isStacked ? controlsHeight : 0) + padding;
-  const availableWidth = window.innerWidth - padding;
-  const availableHeight = window.innerHeight - reservedUI - padding;
+  const reservedUI = headerHeight + padding;
+  const availableWidth = viewportWidth - padding;
+  const availableHeight = viewportHeight - reservedUI - padding;
   const fitSize = Math.max(200, Math.floor(Math.min(availableWidth, availableHeight)));
   const maxSize = fitSize;
   const minSize = 280;
