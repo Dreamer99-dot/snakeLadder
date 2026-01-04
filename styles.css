@@ -385,7 +385,7 @@ body {
   .board-wrap { width: 420px; height: 420px; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   body {
     overflow-y: auto;
     overflow-x: hidden;

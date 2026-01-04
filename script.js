@@ -482,7 +482,11 @@ function updateBoardSize() {
     window.innerHeight;
   const headerHeight = elements.appHeader ? elements.appHeader.getBoundingClientRect().height : 0;
   const isStacked = window.matchMedia("(max-width: 900px)").matches;
-  const reservedUI = headerHeight + padding;
+  const controlsHeight =
+    elements.controls && !elements.gamePanel?.classList.contains("hidden")
+      ? elements.controls.getBoundingClientRect().height
+      : 0;
+  const reservedUI = headerHeight + (isStacked ? controlsHeight : 0) + padding;
   const availableWidth = viewportWidth - padding;
   const availableHeight = viewportHeight - reservedUI - padding;
   const fitSize = Math.max(200, Math.floor(Math.min(availableWidth, availableHeight)));
