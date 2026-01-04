@@ -77,7 +77,9 @@ function cacheElements() {
     zoomReset: document.getElementById("zoomResetBtn"),
     zoomLabel: document.getElementById("zoom-label"),
     fitBoard: document.getElementById("fitBoardBtn"),
-    resizeHandle: document.getElementById("board-resize-handle")
+    resizeHandle: document.getElementById("board-resize-handle"),
+    jsStatus: document.getElementById("js-status"),
+    cssStatus: document.getElementById("css-status")
   };
 }
 
@@ -482,7 +484,10 @@ function updateBoardSize() {
   if (elements.zoomLabel) {
     elements.zoomLabel.textContent = `${Math.round(gameState.zoom * 100)}%`;
   }
-  requestAnimationFrame(drawConnections);
+  requestAnimationFrame(() => {
+    drawConnections();
+    renderTokens();
+  });
 }
 
 function wireEvents() {
@@ -556,6 +561,13 @@ function init() {
   // Initial UI state must be the setup screen.
   console.log("init: cache elements and reset to setup");
   cacheElements();
+  if (elements.jsStatus) {
+    elements.jsStatus.textContent = "JS: OK";
+  }
+  if (elements.cssStatus) {
+    const bg = getComputedStyle(document.documentElement).getPropertyValue("--border").trim();
+    elements.cssStatus.textContent = bg ? "CSS: OK" : "CSS: ...";
+  }
   buildBoard();
   updatePlayerInputs(Number(elements.playerCount.value));
   wireEvents();
@@ -568,6 +580,11 @@ function init() {
     observer.observe(elements.boardWrap);
   }
   updateBoardSize();
+  window.addEventListener("load", () => {
+    updateBoardSize();
+  });
+  setTimeout(updateBoardSize, 50);
+  setTimeout(updateBoardSize, 250);
 }
 
 if (document.readyState === "loading") {
