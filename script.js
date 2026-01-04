@@ -199,6 +199,9 @@ function startGame() {
   updateCurrentPlayer();
   updateDiceFace(null);
   logMove("Game started. All players begin on square 1.");
+  updateBoardSize();
+  setTimeout(updateBoardSize, 50);
+  setTimeout(updateBoardSize, 250);
   requestAnimationFrame(drawConnections);
 }
 
