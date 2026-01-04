@@ -382,6 +382,12 @@ body {
 }
 
 @media (max-width: 600px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .app {
     padding: 16px;
   }
