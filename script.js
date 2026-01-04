@@ -168,9 +168,11 @@ function drawConnections() {
   const getCellCenter = (square) => {
     const cell = board.querySelector(`[data-square='${square}']`);
     if (!cell) return null;
+    const cellRect = cell.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
     return {
-      x: cell.offsetLeft + cell.offsetWidth / 2,
-      y: cell.offsetTop + cell.offsetHeight / 2
+      x: cellRect.left + cellRect.width / 2 - boardRect.left,
+      y: cellRect.top + cellRect.height / 2 - boardRect.top
     };
   };
 

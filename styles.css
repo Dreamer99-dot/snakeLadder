@@ -137,6 +137,12 @@ body {
   z-index: 2;
 }
 
+@supports (-webkit-touch-callout: none) {
+  .board-overlay {
+    z-index: 3;
+  }
+}
+
 .cell {
   background: #faf8f2;
   aspect-ratio: 1 / 1;
